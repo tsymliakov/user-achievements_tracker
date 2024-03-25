@@ -8,6 +8,4 @@ engine = create_engine(
     echo=True,
 )
 
-print(Base.metadata.tables)
-
 Base.metadata.create_all(engine)
