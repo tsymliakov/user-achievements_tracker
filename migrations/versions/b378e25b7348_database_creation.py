@@ -1,8 +1,8 @@
 """Database creation
 
-Revision ID: 6e1d932212c0
+Revision ID: b378e25b7348
 Revises: 
-Create Date: 2024-03-26 13:44:13.406778
+Create Date: 2024-03-26 16:47:43.305755
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '6e1d932212c0'
+revision: str = 'b378e25b7348'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -34,12 +34,13 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user_achievment',
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('achievment_id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('achievment_id', sa.Integer(), nullable=True),
     sa.Column('awarding_datetime', sa.TIMESTAMP(), nullable=True),
     sa.ForeignKeyConstraint(['achievment_id'], ['achievments.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('user_id', 'achievment_id')
+    sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
 
