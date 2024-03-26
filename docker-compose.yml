@@ -5,7 +5,7 @@ services:
     container_name: pg
     image: postgres
     env_file:
-      - path: ./db.env
+      - path: ./.env
         required: true
     volumes:
        - postgres:/data/postgres
