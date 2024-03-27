@@ -15,6 +15,15 @@ class PydanticUser(BaseModel):
     language: str
 
 
+class PydanticAchievment(BaseModel):
+    id: int
+    name_ru: str
+    name_en: str
+    points: int
+    ru_description: str
+    en_description: str
+
+
 users_router = APIRouter(
     prefix="/users",
     tags=["users"],
@@ -31,10 +40,10 @@ achievment_router = APIRouter(
 
 @users_router.get("/")
 def get_users() -> Page[PydanticUser]:
-    a = select(User)
+    stmt = select(User)
 
     with Session() as session:
-        return paginate(session, a)
+        return paginate(session, stmt)
 
 
 @users_router.post("/{id}")
@@ -44,3 +53,14 @@ def add_new_user(id: int):
     return user
 
 add_pagination(users_router)
+
+
+@achievment_router.get("/")
+def get_achievments() -> Page[PydanticAchievment]:
+    stmt = select(Achievment)
+
+    with Session() as session:
+        return paginate(session, stmt)
+
+
+add_pagination(achievment_router)
