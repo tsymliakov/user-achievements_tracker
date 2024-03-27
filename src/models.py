@@ -42,7 +42,7 @@ class Achievment(Base):
     )
 
 
-class UserAchievments(Base):
+class UserAchievment(Base):
     __tablename__ = "user_achievment"
 
     user_id: Mapped[int] = mapped_column(
