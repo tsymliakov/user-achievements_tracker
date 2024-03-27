@@ -30,9 +30,11 @@ class Achievment(Base):
     __tablename__ = "achievments"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(nullable=False)
     points: Mapped[int] = mapped_column(nullable=False)
-    description: Mapped[str] = mapped_column(nullable=False)
+    name_ru: Mapped[str] = mapped_column(nullable=False)
+    name_en: Mapped[str] = mapped_column(nullable=False)
+    ru_description: Mapped[str] = mapped_column(nullable=False)
+    en_description: Mapped[str] = mapped_column(nullable=False)
 
     achievment_of_user: Mapped[List["User"]] = relationship(
         back_populates="user_achievments",
