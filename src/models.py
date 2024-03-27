@@ -31,8 +31,8 @@ class Achievment(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     points: Mapped[int] = mapped_column(nullable=False)
-    name_ru: Mapped[str] = mapped_column(nullable=False)
-    name_en: Mapped[str] = mapped_column(nullable=False)
+    name_ru: Mapped[str] = mapped_column(nullable=False, primary_key=True)
+    name_en: Mapped[str] = mapped_column(nullable=False, primary_key=True)
     ru_description: Mapped[str] = mapped_column(nullable=False)
     en_description: Mapped[str] = mapped_column(nullable=False)
 
