@@ -1,8 +1,9 @@
 from fastapi import APIRouter
 from fastapi_pagination import add_pagination, Page
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 from fastapi_pagination.ext.sqlalchemy import paginate
-from src.database import Session
+from src.database import session_maker, session_old_maker
 from src.models import *
 
 
@@ -26,29 +27,28 @@ class PydanticAchievment(BaseModel):
 
 users_router = APIRouter(
     prefix="/users",
-    tags=["users"],
+    tags=["Пользователи"],
     responses={404: {"description": "Not found"}},
 )
 
 
 achievment_router = APIRouter(
     prefix="/achievments",
-    tags=["achievments"],
+    tags=["Достижения"],
     responses={404: {"description": "Not found"}},
 )
 
 
 @users_router.get("/")
-def get_users() -> Page[PydanticUser]:
-    stmt = select(User)
+def get_all_users() -> Page[PydanticUser]:
+    with session_maker() as session:
+        stmt = select(User)
+    return paginate(session, stmt)
 
-    with Session() as session:
-        return paginate(session, stmt)
 
-
-@users_router.post("/{id}")
-def add_new_user(id: int):
-    with Session() as session:
+@users_router.get("/{id}")
+def get_user(id: int):
+    with session_maker() as session:
         user = session.get(User, id) or "User not found"
     return user
 
@@ -59,7 +59,7 @@ add_pagination(users_router)
 def get_achievments() -> Page[PydanticAchievment]:
     stmt = select(Achievment)
 
-    with Session() as session:
+    with session_maker() as session:
         return paginate(session, stmt)
 
 
