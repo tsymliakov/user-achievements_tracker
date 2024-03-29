@@ -1,9 +1,10 @@
 from fastapi import APIRouter
+from datetime import datetime
 from fastapi_pagination import add_pagination, Page
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy import insert, select
+from sqlalchemy.orm import selectinload
 from fastapi_pagination.ext.sqlalchemy import paginate
-from src.database import session_maker, session_old_maker
+from src.database import session_factory
 from src.models import *
 
 
@@ -41,16 +42,40 @@ achievment_router = APIRouter(
 
 @users_router.get("/")
 def get_all_users() -> Page[PydanticUser]:
-    with session_maker() as session:
+    with session_factory() as session:
         stmt = select(User)
     return paginate(session, stmt)
 
 
 @users_router.get("/{id}")
 def get_user(id: int):
-    with session_maker() as session:
+    with session_factory() as session:
         user = session.get(User, id) or "User not found"
     return user
+
+
+@users_router.post("/{id}")
+def get_user(id: int,
+             achievment_id: int,
+             utc_datetime: datetime = datetime.utcnow()):
+
+    with session_factory() as session:
+        user_achievment = UserAchievment(user_id=id,
+                                         achievment_id=achievment_id,
+                                         awarding_datetime=utc_datetime)
+
+        session.add(user_achievment)
+        session.commit()
+
+
+@users_router.get("/{id}/achievments")
+def get_user_achievments(id: int):
+    with session_factory() as session:
+        stmt = select(User, id).options(selectinload(User.user_achievments)).where(User.id == id)
+
+        result = session.execute(stmt)
+        return result.scalar()
+
 
 add_pagination(users_router)
 
@@ -59,8 +84,26 @@ add_pagination(users_router)
 def get_achievments() -> Page[PydanticAchievment]:
     stmt = select(Achievment)
 
-    with session_maker() as session:
+    with session_factory() as session:
         return paginate(session, stmt)
+
+
+@achievment_router.post("/")
+def create_new_achievment(points: int,
+                          name_ru: str,
+                          name_en: str,
+                          ru_description: str,
+                          en_description: str):
+
+    new_achievment = Achievment(points,
+                                name_ru,
+                                name_en,
+                                ru_description,
+                                en_description)
+
+    with session_factory() as session:
+        session.add(new_achievment)
+        session.commit()
 
 
 add_pagination(achievment_router)
