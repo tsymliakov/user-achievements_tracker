@@ -2,10 +2,18 @@ from typing import List
 
 from datetime import datetime
 
-from sqlalchemy import ForeignKey
+from typing_extensions import Annotated
+
+from sqlalchemy import ForeignKey, Column, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import Base
+
+
+timestamp = Annotated[
+    datetime,
+    mapped_column(nullable=False)
+]
 
 
 class User(Base):
@@ -53,4 +61,4 @@ class UserAchievment(Base):
         ForeignKey("achievments.id"),
         primary_key=True,
     )
-    awarding_datetime: Mapped[datetime]
+    awarding_datetime = Column(DateTime, default=datetime.utcnow)
