@@ -11,24 +11,6 @@ from src.models import *
 from pydantic import BaseModel
 
 
-class PydanticUser(BaseModel):
-    id: int
-    name: str
-    language: str
-
-
-class Pydantic_Ach_With_Translation(BaseModel):
-    name: str
-    description: str
-
-
-class Pydanticachievement(BaseModel):
-    id: int
-    points: int
-    ru_achievement: Pydantic_Ach_With_Translation
-    en_achievement: Pydantic_Ach_With_Translation
-
-
 users_router = APIRouter(
     prefix="/users",
     tags=["Пользователи"],
@@ -95,6 +77,24 @@ def get_user_achievements(id: int) -> UserOut:
         return user
 
 add_pagination(users_router)
+
+
+class PydanticUser(BaseModel):
+    id: int
+    name: str
+    language: str
+
+
+class Pydantic_Ach_With_Translation(BaseModel):
+    name: str
+    description: str
+
+
+class Pydanticachievement(BaseModel):
+    id: int
+    points: int
+    ru_achievement: Pydantic_Ach_With_Translation
+    en_achievement: Pydantic_Ach_With_Translation
 
 
 @achievement_router.get("/")
