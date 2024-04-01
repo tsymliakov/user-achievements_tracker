@@ -1,8 +1,7 @@
 from fastapi import APIRouter
-from datetime import datetime
+from datetime import datetime, timedelta
 from fastapi_pagination import add_pagination, Page
-from sqlalchemy import insert, select
-from sqlalchemy.orm import selectinload
+from sqlalchemy import desc, func, select
 from fastapi_pagination.ext.sqlalchemy import paginate
 from src.database import session_factory
 from src.models import *
@@ -51,7 +50,7 @@ def add_achievement_to_user(user_id: int,
                             utc_datetime: datetime = datetime.utcnow()):
 
     with session_factory() as session:
-        user_achievement = Userachievement(user_id=user_id,
+        user_achievement = UserAchievement(user_id=user_id,
                                          achievement_id=achievement_id,
                                          awarding_datetime=utc_datetime)
 
@@ -81,6 +80,78 @@ def get_user_achievements(id: int) -> UserOut:
             user_lang_achievement = getattr(ach, f"{user_lang}_achievement")
             ach.description = user_lang_achievement.description
         return user
+
+
+
+@users_router.get("/users/max_achievements")
+def get_user_with_max_achievements():
+    with session_factory() as session:
+        stmt = select(UserAchievement.user_id, func.count(UserAchievement.user_id).label('ach_count')).group_by(UserAchievement.user_id).order_by(desc('ach_count'))
+
+        result = session.execute(stmt)
+    return {"id": result.scalar()}
+
+
+@users_router.get("/users/max_points")
+def get_user_with_max_points():
+    with session_factory() as session:
+        stmt = select(UserAchievement.user_id, func.sum(Achievement.points).label('points_sum')).join_from(UserAchievement, Achievement).group_by(UserAchievement.user_id).order_by(desc('points_sum'))
+
+        result = session.execute(stmt)
+    return result.scalar()
+
+
+@users_router.get("/users/max_points_difference")
+def get_users_with_max_points_difference():
+    with session_factory() as session:
+        stmt = select(UserAchievement.user_id).join_from(UserAchievement, Achievement).group_by(UserAchievement.user_id).order_by(desc(func.sum(Achievement.points)))
+
+        result = session.execute(stmt).all()
+        max_points_sum_user_id = result[0]
+        min_points_sum_user_id = result[-1]
+
+        return {'user_id_max': max_points_sum_user_id[0],
+                'user_id_min': min_points_sum_user_id[0]}
+
+
+@users_router.get("/users/min_points_difference")
+def get_users_with_min_points_difference():
+    with session_factory() as session:
+        stmt = select(UserAchievement.user_id, func.sum(Achievement.points).label('points_sum')).join_from(UserAchievement, Achievement).group_by(UserAchievement.user_id)
+
+        user_point_sums = session.execute(stmt).all()
+        # SQLAlchemy нативно и без костылей не поддерживает cross- join.
+
+    cross_joined = []
+
+    for i in range(len(user_point_sums)):
+        for j in range(len(user_point_sums)):
+            if i==j:
+                continue
+            cross_joined.append({
+                'user_id_1': user_point_sums[i][0],
+                'user_id_2': user_point_sums[j][0],
+                'difference': abs(user_point_sums[i][1] - user_point_sums[j][1])
+            })
+
+    result = min(cross_joined, key = lambda k: k['difference'])
+
+    return [result['user_id_1'], result['user_id_2']]
+
+
+@users_router.get("/users/achievements_7_days_in_row")
+def get_users_with_achievements_7_days_in_row():
+    end_date = datetime.utcnow()
+    start_date = end_date - timedelta(days=7)
+
+    with session_factory() as session:
+        stmt = select(UserAchievement).filter(UserAchievement.awarding_datetime >= start_date, UserAchievement.awarding_datetime <= end_date)
+
+        print(stmt)
+        result = session.execute(stmt)
+
+    return result.all()
+
 
 add_pagination(users_router)
 
