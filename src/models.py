@@ -19,7 +19,7 @@ timestamp = Annotated[
 class User(Base):
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(nullable=False)
     language: Mapped[str] = mapped_column(nullable=False)
 
@@ -37,7 +37,7 @@ class User(Base):
 class Achievment(Base):
     __tablename__ = "achievments"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     points: Mapped[int] = mapped_column(nullable=False)
     name_ru: Mapped[str] = mapped_column(nullable=False, primary_key=True)
     name_en: Mapped[str] = mapped_column(nullable=False, primary_key=True)
