@@ -109,9 +109,9 @@ def _clear_tables():
     with session_factory() as session:
         session.query(UserAchievment).delete()
         session.query(User).delete()
-        session.query(Achievment).delete()
         session.query(RU_achievment).delete()
         session.query(EN_achievment).delete()
+        session.query(Achievment).delete()
         session.commit()
 
 
