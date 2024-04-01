@@ -71,36 +71,24 @@ def get_user(id: int,
 
 class AchievmentOut(BaseModel):
     id: int
+    description: str
 
 class UserOut(BaseModel):
     id: int
-
-    # user_achievments: List[AchievmentOut]
+    user_achievments: List[AchievmentOut]
 
 
 @users_router.get("/{id}/achievments")
 def get_user_achievments(id: int) -> UserOut:
     with session_factory() as session:
-        stmt = select(User).options(selectinload(User.user_achievments)).where(User.id == id)
-        user = session.execute(stmt).all() #.first()[0]
+        user = session.get(User, id)
 
+        user_lang = user.language
+        print(user_lang)
 
-        # user_achiv = user.user_achievments
-
-        # todo:
-        # monkeypatching- то работает, но вот что произойдет, если языков станет больше двух...
-        # наиболее красивое решение, которое мне видется, заключается в следующем:
-        # в модели Achievments стоит оставить лишь id и points, а все описания разнести по разным таблицам
-        # так, чтобы на каждый язык была своя таблица описаний достижений, связать это дело через один-ко-многим.
-        #
-        # Таким образом после получения экземпляра модели пользователя на основании значения поля language
-        # станет возможноым автоматически и почти не приходя в сознание запросить описание ачивмента из таблицы с
-        # требуемым языком.
-        # for achievment in user_achiv:
-        #     achievment.__dict__['description'] = achievment.ru_description if \
-        #                                          user.language == 'ru' else \
-        #                                          achievment.en_description
-        print(id)
+        for ach in user.user_achievments:
+            user_lang_achievment = getattr(ach, f"{user_lang}_achievment")
+            ach.description = user_lang_achievment.description
         return user
 
 add_pagination(users_router)
