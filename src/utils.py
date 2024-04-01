@@ -36,7 +36,7 @@ achievments = [
             'name_ru' : 'Бабушкино золотце',
             'name_en' : 'Grandma\'s goldfish',
             'ru_description' : 'Съел первое, второе, компот и попросил добавки',
-            'en_description' : 'Ate the first, second, compote and asked for more'
+            'en_description' : 'Ate the first and second course, compote and asked for more'
         }
     ]
 
