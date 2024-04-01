@@ -15,9 +15,9 @@ class User(Base):
     name: Mapped[str] = mapped_column(nullable=False)
     language: Mapped[str] = mapped_column(nullable=False)
 
-    user_achievments: Mapped[List["Achievment"]] = relationship(
-        back_populates="achievment_of_user",
-        secondary="user_achievment"
+    user_achievements: Mapped[List["Achievement"]] = relationship(
+        back_populates="achievement_of_user",
+        secondary="user_achievement"
     )
 
     def __str__(self):
@@ -26,48 +26,48 @@ class User(Base):
                 "language": self.language}
 
 
-class Achievment(Base):
-    __tablename__ = "achievments"
+class Achievement(Base):
+    __tablename__ = "achievements"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     points: Mapped[int] = mapped_column(nullable=False)
 
-    achievment_of_user: Mapped[List["User"]] = relationship(
-        back_populates="user_achievments",
-        secondary="user_achievment"
+    achievement_of_user: Mapped[List["User"]] = relationship(
+        back_populates="user_achievements",
+        secondary="user_achievement"
     )
 
-    ru_achievment: Mapped['RU_achievment'] = relationship(back_populates='achievment')
-    en_achievment: Mapped['EN_achievment'] = relationship(back_populates='achievment')
+    ru_achievement: Mapped['RU_achievement'] = relationship(back_populates='achievement')
+    en_achievement: Mapped['EN_achievement'] = relationship(back_populates='achievement')
 
 
-class RU_achievment(Base):
-    __tablename__ = "ru_achievments"
+class RU_achievement(Base):
+    __tablename__ = "ru_achievements"
 
-    parent_ach_id: Mapped[int] = mapped_column(ForeignKey(Achievment.id))
+    parent_ach_id: Mapped[int] = mapped_column(ForeignKey(Achievement.id))
     name: Mapped[str] = mapped_column(nullable=False, primary_key=True)
     description: Mapped[str] = mapped_column(nullable=False)
-    achievment: Mapped[Achievment] = relationship(back_populates='ru_achievment')
+    achievement: Mapped[Achievement] = relationship(back_populates='ru_achievement')
 
 
-class EN_achievment(Base):
-    __tablename__ = "en_achievments"
+class EN_achievement(Base):
+    __tablename__ = "en_achievements"
 
-    parent_ach_id: Mapped[int] = mapped_column(ForeignKey(Achievment.id))
+    parent_ach_id: Mapped[int] = mapped_column(ForeignKey(Achievement.id))
     name: Mapped[str] = mapped_column(nullable=False, primary_key=True)
     description: Mapped[str] = mapped_column(nullable=False)
-    achievment: Mapped[Achievment] = relationship(back_populates='en_achievment')
+    achievement: Mapped[Achievement] = relationship(back_populates='en_achievement')
 
 
-class UserAchievment(Base):
-    __tablename__ = "user_achievment"
+class Userachievement(Base):
+    __tablename__ = "user_achievement"
 
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id"),
         primary_key=True,
     )
-    achievment_id: Mapped[int] = mapped_column(
-        ForeignKey("achievments.id"),
+    achievement_id: Mapped[int] = mapped_column(
+        ForeignKey("achievements.id"),
         primary_key=True,
     )
     awarding_datetime = Column(DateTime, default=datetime.utcnow, nullable=False)

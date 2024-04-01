@@ -1,4 +1,3 @@
-from ctypes import pointer
 import sys
 import os
 
@@ -18,7 +17,7 @@ from faker import Faker
 from faker.providers import DynamicProvider
 
 
-achievments = [
+achievements = [
     {
         'points' : 1,
         'ru': {
@@ -71,15 +70,15 @@ def _create_fake_users():
         session.commit()
 
 
-def _create_fake_achievments():
-    global achievments
+def _create_fake_achievements():
+    global achievements
 
     with session_factory() as session:
-        for ach in achievments:
-            r_ach = RU_achievment(**ach['ru'])
-            e_ach = EN_achievment(**ach['en'])
-            achievment = Achievment(points=ach['points'], ru_achievment=r_ach, en_achievment=e_ach)
-            session.add(achievment)
+        for ach in achievements:
+            r_ach = RU_achievement(**ach['ru'])
+            e_ach = EN_achievement(**ach['en'])
+            achievement = achievement(points=ach['points'], ru_achievement=r_ach, en_achievement=e_ach)
+            session.add(achievement)
         session.commit()
 
 
@@ -90,34 +89,34 @@ def _random_past_date():
 def _assign_achievements_to_users():
     with session_factory() as session:
         users = session.query(User).all()
-        achievments = session.query(Achievment).all()
+        achievements = session.query(Achievement).all()
 
         for user in users:
             num_achievements = random.randint(1, 3)
 
-            selected_achievments = random.sample(achievments, num_achievements)
-            for ach in selected_achievments:
-                user_achievment = UserAchievment(user_id=user.id,
-                                                 achievment_id=ach.id,
+            selected_achievements = random.sample(achievements, num_achievements)
+            for ach in selected_achievements:
+                user_achievement = Userachievement(user_id=user.id,
+                                                 achievement_id=ach.id,
                                                  awarding_datetime=_random_past_date())
 
-                session.add(user_achievment)
+                session.add(user_achievement)
         session.commit()
 
 
 def _clear_tables():
     with session_factory() as session:
-        session.query(UserAchievment).delete()
+        session.query(Userachievement).delete()
         session.query(User).delete()
-        session.query(RU_achievment).delete()
-        session.query(EN_achievment).delete()
-        session.query(Achievment).delete()
+        session.query(RU_achievement).delete()
+        session.query(EN_achievement).delete()
+        session.query(Achievement).delete()
         session.commit()
 
 
 def _fill_tables():
     _create_fake_users()
-    _create_fake_achievments()
+    _create_fake_achievements()
     _assign_achievements_to_users()
 
 
