@@ -54,13 +54,13 @@ def get_user(id: int):
     return user
 
 
-@users_router.post("/{id}")
-def get_user(id: int,
-             achievement_id: int,
-             utc_datetime: datetime = datetime.utcnow()):
+@users_router.post("/{user_id}/add_achievement/{achievement_id}")
+def add_achievement_to_user(user_id: int,
+                            achievement_id: int,
+                            utc_datetime: datetime = datetime.utcnow()):
 
     with session_factory() as session:
-        user_achievement = Userachievement(user_id=id,
+        user_achievement = Userachievement(user_id=user_id,
                                          achievement_id=achievement_id,
                                          awarding_datetime=utc_datetime)
 
