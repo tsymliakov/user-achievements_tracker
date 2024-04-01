@@ -25,6 +25,12 @@ achievement_router = APIRouter(
 )
 
 
+class PydanticUser(BaseModel):
+    id: int
+    name: str
+    language: str
+
+
 @users_router.get("/")
 def get_all_users() -> Page[PydanticUser]:
     with session_factory() as session:
@@ -79,12 +85,6 @@ def get_user_achievements(id: int) -> UserOut:
 add_pagination(users_router)
 
 
-class PydanticUser(BaseModel):
-    id: int
-    name: str
-    language: str
-
-
 class Pydantic_Ach_With_Translation(BaseModel):
     name: str
     description: str
@@ -112,13 +112,18 @@ def create_new_achievement(points: int,
                           ru_description: str,
                           en_description: str):
 
-    new_achievement = Achievement(points,
-                                name_ru,
-                                name_en,
-                                ru_description,
-                                en_description)
 
     with session_factory() as session:
+        en_ach = EN_achievement(name=name_en,
+                                description=en_description)
+
+        ru_ach = RU_achievement(name=name_ru,
+                                description=ru_description)
+
+        new_achievement = Achievement(points=points,
+                                      ru_achievement=ru_ach,
+                                      en_achievement=en_ach)
+
         session.add(new_achievement)
         session.commit()
 
