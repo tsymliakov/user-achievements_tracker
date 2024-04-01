@@ -2,18 +2,13 @@ from typing import List
 
 from datetime import datetime
 
-from typing_extensions import Annotated
-
 from sqlalchemy import ForeignKey, Column, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import Base
 
 
-timestamp = Annotated[
-    datetime,
-    mapped_column(nullable=False)
-]
+from pydantic import BaseModel
 
 
 class User(Base):
