@@ -77,7 +77,7 @@ def _create_fake_achievements():
         for ach in achievements:
             r_ach = RU_achievement(**ach['ru'])
             e_ach = EN_achievement(**ach['en'])
-            achievement = achievement(points=ach['points'], ru_achievement=r_ach, en_achievement=e_ach)
+            achievement = Achievement(points=ach['points'], ru_achievement=r_ach, en_achievement=e_ach)
             session.add(achievement)
         session.commit()
 
