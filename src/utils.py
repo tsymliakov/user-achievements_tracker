@@ -1,3 +1,4 @@
+from ctypes import pointer
 import sys
 import os
 
@@ -18,27 +19,40 @@ from faker.providers import DynamicProvider
 
 
 achievments = [
-        {
-            'points' : 1,
-            'name_ru' : 'Первый шутник на районе',
-            'name_en' : 'First jokester in the neighborhood',
-            'ru_description' : 'Пошутил смешнее остальных',
-            'en_description' : 'Made the funniest joke of all'
+    {
+        'points' : 1,
+        'ru': {
+            'name': 'Первый шутник на районе',
+            'description': 'Пошутил смешнее остальных'
         },
-        {
-            'points' : 2,
-            'name_ru' : 'Участник допинг- контроля',
-            'name_en' : 'Doping Control Participant',
-            'ru_description' : 'Прошел все unit-тесты самостоятельно без участия кода',
-            'en_description' : 'Passed all unit tests independently without code participation'
-        },{
-            'points' : 3,
-            'name_ru' : 'Бабушкино золотце',
-            'name_en' : 'Grandma\'s goldfish',
-            'ru_description' : 'Съел первое, второе, компот и попросил добавки',
-            'en_description' : 'Ate the first and second course, compote and asked for more'
+        'en': {
+            'name': 'First jokester in the neighborhood',
+            'description': 'Made the funniest joke of all'
         }
-    ]
+    },
+    {
+        'points' : 2,
+        'ru': {
+            'name': 'Участник допинг- контроля',
+            'description': 'Прошел все unit-тесты самостоятельно без участия кода'
+        },
+        'en': {
+            'name': 'Doping Control Participant',
+            'description': 'Passed all unit tests independently without code participation'
+        }
+    },
+    {
+        'points' : 3,
+        'ru': {
+            'name': 'Бабушкино золотце',
+            'description': 'Grandma\'s goldfish'
+        },
+        'en': {
+            'name': 'Съел первое, второе, компот и попросил добавки',
+            'description': 'Ate the first and second course, compote and asked for more'
+        }
+    }
+]
 
 
 def _create_fake_users():
@@ -62,7 +76,10 @@ def _create_fake_achievments():
 
     with session_factory() as session:
         for ach in achievments:
-            session.add(Achievment(**ach))
+            r_ach = RU_achievment(**ach['ru'])
+            e_ach = EN_achievment(**ach['en'])
+            achievment = Achievment(points=ach['points'], ru_achievment=r_ach, en_achievment=e_ach)
+            session.add(achievment)
         session.commit()
 
 
@@ -93,6 +110,8 @@ def _clear_tables():
         session.query(UserAchievment).delete()
         session.query(User).delete()
         session.query(Achievment).delete()
+        session.query(RU_achievment).delete()
+        session.query(EN_achievment).delete()
         session.commit()
 
 
