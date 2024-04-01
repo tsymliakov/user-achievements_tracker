@@ -44,7 +44,7 @@ achievments = [
 def _create_fake_users():
     language_provider = DynamicProvider(
         provider_name="language",
-        elements = ["ru_description", "en"]
+        elements = ["ru", "en"]
     )
 
     f = Faker()
@@ -107,6 +107,3 @@ def prepare_tables(clear_tables=False):
     if clear_tables:
         _clear_tables()
     _fill_tables()
-
-
-
