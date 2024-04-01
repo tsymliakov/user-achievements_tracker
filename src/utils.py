@@ -96,7 +96,7 @@ def _assign_achievements_to_users():
 
             selected_achievements = random.sample(achievements, num_achievements)
             for ach in selected_achievements:
-                user_achievement = Userachievement(user_id=user.id,
+                user_achievement = UserAchievement(user_id=user.id,
                                                  achievement_id=ach.id,
                                                  awarding_datetime=_random_past_date())
 
@@ -106,7 +106,7 @@ def _assign_achievements_to_users():
 
 def _clear_tables():
     with session_factory() as session:
-        session.query(Userachievement).delete()
+        session.query(UserAchievement).delete()
         session.query(User).delete()
         session.query(RU_achievement).delete()
         session.query(EN_achievement).delete()

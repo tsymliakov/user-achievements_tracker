@@ -59,7 +59,7 @@ class EN_achievement(Base):
     achievement: Mapped[Achievement] = relationship(back_populates='en_achievement')
 
 
-class Userachievement(Base):
+class UserAchievement(Base):
     __tablename__ = "user_achievement"
 
     user_id: Mapped[int] = mapped_column(
