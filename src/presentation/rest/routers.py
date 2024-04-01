@@ -17,13 +17,16 @@ class PydanticUser(BaseModel):
     language: str
 
 
+class Pydantic_Ach_With_Translation(BaseModel):
+    name: str
+    description: str
+
+
 class Pydanticachievement(BaseModel):
     id: int
-    name_ru: str
-    name_en: str
     points: int
-    ru_description: str
-    en_description: str
+    ru_achievement: Pydantic_Ach_With_Translation
+    en_achievement: Pydantic_Ach_With_Translation
 
 
 users_router = APIRouter(
@@ -95,7 +98,7 @@ add_pagination(users_router)
 
 
 @achievement_router.get("/")
-def get_achievements() -> Page[Pydanticachievement]:
+def get_all_achievements() -> Page[Pydanticachievement]:
     stmt = select(Achievement)
 
     with session_factory() as session:
