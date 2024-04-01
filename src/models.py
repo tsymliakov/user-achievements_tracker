@@ -61,4 +61,4 @@ class UserAchievment(Base):
         ForeignKey("achievments.id"),
         primary_key=True,
     )
-    awarding_datetime = Column(DateTime, default=datetime.utcnow)
+    awarding_datetime = Column(DateTime, default=datetime.utcnow, nullable=False)
