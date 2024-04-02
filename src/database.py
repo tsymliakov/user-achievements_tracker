@@ -15,4 +15,6 @@ class Base(DeclarativeBase):
 engine = create_engine(DATABASE_URL, echo=False)
 
 
-session_factory = sessionmaker(bind=engine, class_=Session, expire_on_commit=False)
+def get_session():
+    with Session(bind=engine, expire_on_commit=False) as session:
+        yield session
