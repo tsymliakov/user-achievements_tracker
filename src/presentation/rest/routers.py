@@ -41,9 +41,9 @@ def get_all_users(session: Session = Depends(get_session)) -> Page[PydanticUser]
 
 
 @users_router.get("/{id}")
-def get_user(id: int):
-    with session_factory() as session:
-        user = session.get(User, id) or "User not found"
+def get_user(id: int,
+             session: Session = Depends(get_session)):
+    user = session.get(User, id) or "User not found"
     return user
 
 
